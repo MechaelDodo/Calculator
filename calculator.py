@@ -298,18 +298,18 @@ def mathtransformation(list_expr):      #['a', 'b', 's', '(', '2', '-', '10', ')
     return list_expr
            
                         
-def expressioneval_mathexpression(list_expr):               #Later(WITHOUT TESTING) expressioneval_mathexpression must give (not change) a new list  
+def expressioneval_computemath(list_expr):               #  computes math expression
     index = 0
     print('input', list_expr)     
-    while index != len(list_expr):                          #Later remake the condition (may be 'True' will be more beautiful)
-        if (list_expr[index] in DICT_MATH or                #Later must add 'else:i+=1;continue' in future
+    while index != len(list_expr):                          
+        if (list_expr[index] in DICT_MATH or                
             list_expr[index] in DICT_ROUND or
             list_expr[index] in DICT_ABS) and list_expr[index+1] == '(':
             check_list = list_expr[index+1:]
         else:
             index += 1
             continue
-
+        
         count_leftbrackets = 0
         count_rightbrackets = 0
         for offset, num in enumerate(check_list):
@@ -324,18 +324,20 @@ def expressioneval_mathexpression(list_expr):               #Later(WITHOUT TESTI
             if  (num in DICT_MATH or                 
                 num in DICT_ROUND or
                 num in DICT_ABS):
-                expressioneval_mathexpression(check_list)
+                expressioneval_computemath(check_list)
                 print('lol',check_list)
 
         bracketspriority(check_list)
         check_list = ''.join(check_list)
+        print(list_expr[index+1:endbr+2+index])
+        del list_expr[index+1:endbr+2+index]                      
+        list_expr.insert(index+1, check_list)
         
-        del list_expr[index+1:endbr+2]                      #Later there is truble with 'endbr'. It doesn't delete some numerals there (endbr must be '2', but if it will be '5' result will be almost correct')
-        list_expr.insert(index+1, check_list)               #Later
         
         expressioneval_math(list_expr, DICT_ABS)
-        index += 1         
-        return expressioneval_mathexpression(list_expr)
+        index += 1
+        
+        return expressioneval_computemath(list_expr)
         
         
 
@@ -379,7 +381,7 @@ class Calculator:
             list_expression = convertdigit(list_expression) #
             convertfloat(list_expression)                   #
 
-            expressioneval_mathexpression(list_expression)
+            expressioneval_computemath(list_expression)
 
             bracketspriority(list_expression)               #
             expressioneval(list_expression, DICT_POW)       #
