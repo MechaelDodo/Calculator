@@ -119,7 +119,7 @@ def expressioneval(list_expr, desiredDICT):     #general function for expression
 def expressioneval_math(list_expr, desiredDICT):        #Later (function for expressions from module math and abs,round)
     #list_expr = subtransformation(list_expr)
     for offset, sign in enumerate(list_expr):               
-        if sign in desiredDICT:         
+        if sign in desiredDICT and list_expr[offset+1] != '(':         
             numright = list_expr[offset+1]
             res = str(desiredDICT[sign](numright))
             print('res', res)
@@ -296,57 +296,11 @@ def mathtransformation(list_expr):      #['a', 'b', 's', '(', '2', '-', '10', ')
         else:
             secondoffset += 1
     return list_expr
-
-
-"""
-def expressioneval_mathexpression(list_expr):               #Later
-    print('input', list_expr)
-    for offset, num in enumerate(list_expr):
-        if (num in DICT_MATH or
-            num in DICT_ROUND or
-            num in DICT_ABS):
-            
-            aftermath = list_expr[offset+1:]
-            count_leftbrackets = 0
-            count_rightbrackets = 0
-            for offsetafter, numafter in enumerate(aftermath):
-                if numafter == '(':
-                    count_leftbrackets += 1
-                elif numafter == ')':
-                    count_rightbrackets += 1
-                    if count_leftbrackets == count_rightbrackets:
-                        
-                        
-                        
-                        aftermath = aftermath[:offsetafter+1]
-                        print('aftermath', aftermath)
-                        ### if the math expression has other expression
-                        for offsetin, numin in enumerate(aftermath):
-                            if (numin in DICT_MATH or                                
-                                numin in DICT_ROUND or
-                                numin in DICT_ABS):
-                                print('find new math expr', aftermath)
-                                return expressioneval_mathexpression(aftermath)
-                        ###
-                        bracketspriority(aftermath)
-                        
-                        aftermath = ''.join(aftermath)
-                        print('befor del', list_expr, offset+1, offset+offsetafter+2)
-                        print('befor del', aftermath, '\n')
-                        del list_expr[offset+1:offset+offsetafter+2]
-                        list_expr.insert(offset+1, aftermath)
-                        print('after del', list_expr)
-                        
-                        expressioneval_math(list_expr, DICT_ABS)        #Later
-                        print('after expressioneval_math', list_expr)
-                        
-                        
-                        return expressioneval_mathexpression(list_expr)
-"""                        
+           
                         
 def expressioneval_mathexpression(list_expr):               #Later(WITHOUT TESTING) expressioneval_mathexpression must give (not change) a new list  
     index = 0
-    
+    print('input', list_expr)     
     while index != len(list_expr):                          #Later remake the condition (may be 'True' will be more beautiful)
         if (list_expr[index] in DICT_MATH or                #Later must add 'else:i+=1;continue' in future
             list_expr[index] in DICT_ROUND or
@@ -369,13 +323,19 @@ def expressioneval_mathexpression(list_expr):               #Later(WITHOUT TESTI
         for num in check_list:                              #if for example abs has math expression inside itself
             if  (num in DICT_MATH or                 
                 num in DICT_ROUND or
-                num in DICT_ABS):  check_list = expressioneval_mathexpression(check_list)   
+                num in DICT_ABS):
+                expressioneval_mathexpression(check_list)
+                print('lol',check_list)
 
         bracketspriority(check_list)
         check_list = ''.join(check_list)
         
-        del list_expr[index+1:endbr+2]                      #Later think in future have to add more points than one 'index'
+        del list_expr[index+1:endbr+2]                      #Later there is truble with 'endbr'. It doesn't delete some numerals there (endbr must be '2', but if it will be '5' result will be almost correct')
         list_expr.insert(index+1, check_list)               #Later
+        
+        expressioneval_math(list_expr, DICT_ABS)
+        index += 1         
+        return expressioneval_mathexpression(list_expr)
         
         
 
@@ -419,8 +379,8 @@ class Calculator:
             list_expression = convertdigit(list_expression) #
             convertfloat(list_expression)                   #
 
-            #expressioneval_mathexpression(list_expression)
- 
+            expressioneval_mathexpression(list_expression)
+
             bracketspriority(list_expression)               #
             expressioneval(list_expression, DICT_POW)       #
             expressioneval(list_expression, DICT_MUL_DIV)   #
