@@ -39,10 +39,10 @@ def notequalForCal(aleft, aright):
     return float(aleft) != float(aright)
 
 def absForCal(num):                   #Later
-    return abs(float(num))
+    return abs(num)
 
 def roundForCal(num):                 #Later
-    return round(float(num))
+    return round(num)
 
 
 DICT_ABS = {'abs': absForCal}
@@ -61,10 +61,10 @@ for attr in math.__dict__:
         DICT_MATH[attr] = math.__dict__[attr]
 
 DICT_MATH_ARGS = {}                     #this dict has more attrs than 1
-for attr in ('atan2', 'copysign', 'fmod', 'gcd', 'hypot', 'isclose', 'ldexp', 'pow', 'remainder', 'log'):
+for attr in ('atan2', 'copysign', 'fmod', 'gcd', 'hypot', 'isclose', 'ldexp', 'pow', 'remainder', 'log'):       #Later i will think about 'log' because
+                                                                                                                #'log' can take as 1 arg and 2 args
     DICT_MATH_ARGS[attr] = DICT_MATH[attr]
     del DICT_MATH[attr]
-
 
 
 class calculatorException(Exception):   pass
@@ -86,8 +86,14 @@ class check_separatrixException(calculatorException):
         return 'Separatrix should not be between not digit numbers'
 
 class check_mathseparatrixException(calculatorException):
+    def __init__(self, mathdict):
+        calculatorException.__init__(self)
+        self.mathdict = mathdict
     def __str__(self):
-        return 'Separatrix should not be more than 2'
+        if self.mathdict == DICT_MATH:
+            return 'Separatrix should not be here'
+        elif self.mathdict == DICT_MATH_ARGS:
+            return 'Separatrix should not be more than 1'
 
 
 
@@ -112,24 +118,27 @@ def check_brackets(list_expr):
     
 
 def check_mathseparatrix(list_expr):            #checks ',' in args DICT_MATH_ARGS and DICT_MATH
+                                                #Later add checking to check nested math expression
+                                                #Now it just checks one math expression without other expressions
     for offset, num in enumerate(list_expr):
         if num in DICT_MATH or num in DICT_MATH_ARGS:
             check_list = list_expr[offset+1:]
             count_leftbrackets = 0
             count_rightbrackets = 0
-            for offset, num in enumerate(check_list):
-                if num =='(':   count_leftbrackets += 1
-                elif num ==')':
+            for offsetcheck, numcheck in enumerate(check_list):
+                if numcheck =='(':   count_leftbrackets += 1
+                elif numcheck ==')':
                     count_rightbrackets += 1
                     if count_leftbrackets == count_rightbrackets:
-                        check_list = check_list[:offset+1]
+                        check_list = check_list[:offsetcheck+1]
             countsep = 0
             for sign in check_list:
                 if sign == ',': countsep += 1
+            print(num, countsep)
             if num in DICT_MATH and countsep > 0:
-                raise check_mathseparatrixException
-            if num in DICT_MATH_ARGS and countsep > 1:
-                raise check_mathseparatrixException 
+                raise check_mathseparatrixException(DICT_MATH)
+            elif num in DICT_MATH_ARGS and countsep > 1:
+                raise check_mathseparatrixException(DICT_MATH_ARGS) 
                         
 
 def expressioneval(list_expr, desiredDICT):     #general function for expressions
@@ -145,14 +154,25 @@ def expressioneval(list_expr, desiredDICT):     #general function for expression
 
 
 def expressioneval_math(list_expr, desiredDICT):        #Later (function for expressions from module math and abs,round)
-                                                        #may be will make a new function for DICT_MATH_ARGS 
+                                                        #may be will make a new function for DICT_MATH_ARGS
+    print('expressioneval_math', list_expr)
     for offset, sign in enumerate(list_expr):               
-        if sign in desiredDICT and list_expr[offset+1] != '(':         
+        if (sign in desiredDICT and                   #for MATH DICT_MATH_ARGS
+              list_expr[offset+1] != '(' and
+              list_expr[offset+2] == ','):
+            numleft = list_expr[offset+1]
+            numright = list_expr[offset+3]
+            res = str(desiredDICT[sign](float(numleft), float(numright)))
+            del list_expr[offset:offset+4]
+            list_expr.insert(offset, res)
+            return expressioneval_math(list_expr, desiredDICT)
+        elif sign in desiredDICT and list_expr[offset+1] != '(':
             numright = list_expr[offset+1]
-            res = str(desiredDICT[sign](numright))
+            res = str(desiredDICT[sign](float(numright)))
             del list_expr[offset:offset+2]
             list_expr.insert(offset, res)
-            return expressioneval_math(list_expr, desiredDICT) 
+            return expressioneval_math(list_expr, desiredDICT)
+            
         
 
 def convertdigit(list_expr):        #returns new list(doesn't change list): ['3','3'] => ['33']
@@ -313,7 +333,8 @@ def mathtransformation(list_expr):      #['a', 'b', 's', '(', '2', '-', '10', ')
         checkvalue = ''.join(list_expr[firstoffset:secondoffset])
         if (checkvalue in DICT_MATH or
             checkvalue in DICT_ROUND or
-            checkvalue in DICT_ABS):
+            checkvalue in DICT_ABS or
+            checkvalue in DICT_MATH_ARGS):
             del list_expr[firstoffset:secondoffset]
             list_expr.insert(firstoffset, checkvalue)
             secondoffset -= len(checkvalue) #+1          
@@ -328,12 +349,14 @@ def mathtransformation(list_expr):      #['a', 'b', 's', '(', '2', '-', '10', ')
     return list_expr
            
                         
-def expressioneval_computemath(list_expr):               #Later for DICT_MATH_ARGS  computes math expression
+def expressioneval_computemath(list_expr):                          #Later this fun has a bag: abs(-2)+abs(-3)=> 2 (must be 5)
+    print('expressioneval_computemath', list_expr)
     index = 0    
     while index != len(list_expr):                          
         if (list_expr[index] in DICT_MATH or                
             list_expr[index] in DICT_ROUND or
-            list_expr[index] in DICT_ABS) and list_expr[index+1] == '(':
+            list_expr[index] in DICT_ABS or
+            list_expr[index] in DICT_MATH_ARGS) and list_expr[index+1] == '(':
             check_list = list_expr[index+1:]
         else:
             index += 1
@@ -348,20 +371,43 @@ def expressioneval_computemath(list_expr):               #Later for DICT_MATH_AR
                 if count_leftbrackets == count_rightbrackets:
                     check_list = check_list[:offset+1]
                     endbr = offset
+        
 
-        for num in check_list:                              #if for example 'abs' has math expression inside itself
+        for num in check_list:                                      #if for example 'abs' has math expression inside itself
             if  (num in DICT_MATH or                 
                 num in DICT_ROUND or
-                num in DICT_ABS):
+                num in DICT_ABS or
+                 num in DICT_MATH_ARGS):
+                print('check_list', check_list)
                 expressioneval_computemath(check_list)
-
+                
+        for offset, num in enumerate(check_list):                   #in math expr which has any args 
+            if num == ',':
+                leftcheck_list = check_list[1:offset]
+                rightcheck_list = check_list[offset+1:-1]                
+                for lst in (leftcheck_list, rightcheck_list):       #QUICK'N'DIRTY
+                    lst.insert(0, '(')
+                    lst.append(')')
+                    bracketspriority(lst)
+                    
+                leftcheck_list = ''.join(leftcheck_list)
+                rightcheck_list = ''.join(rightcheck_list)
+                del list_expr[index+1:endbr+2+index]
+                for inlist in (rightcheck_list, ',', leftcheck_list):
+                    list_expr.insert(index+1, inlist)
+                expressioneval_math(list_expr, DICT_MATH_ARGS)
+                
+                index += 1                                          #?         
+                return expressioneval_computemath(list_expr)              
         bracketspriority(check_list)
         check_list = ''.join(check_list)
         del list_expr[index+1:endbr+2+index]                      
         list_expr.insert(index+1, check_list)
                 
         expressioneval_math(list_expr, DICT_ABS)
-        index += 1        
+        expressioneval_math(list_expr, DICT_MATH)
+        
+        index += 1                                  #?
         return expressioneval_computemath(list_expr)
 
                             
@@ -398,7 +444,7 @@ class Calculator:
             list_expression = convertdigit(list_expression) #
             convertfloat(list_expression)                   #
                        
-            check_mathseparatrix(list_expression)            
+            check_mathseparatrix(list_expression)
             expressioneval_computemath(list_expression)
             
             bracketspriority(list_expression)               #
@@ -417,7 +463,7 @@ if __name__ == '__main__':
     
     while True:
         expr = input('Enter the expression (exit - y):\n')
-        if expr == 'y' or expr == 'Y':      # add the exception .when someone enters 'Y' or 'y'
+        if expr == 'y' or expr == 'Y':                  # add the exception .when someone enters 'Y' or 'y'
             break
         else:
             calc.new_expression(expr)            
