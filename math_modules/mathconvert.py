@@ -1,4 +1,4 @@
-from mathsigns import TOUPLE_COUNST, DICT_MATH, TOUPLE_COUNST_inf_nan
+from .mathsigns import TOUPLE_COUNST, DICT_MATH, TOUPLE_COUNST_inf_nan
 
 def convertdigit(list_expr):        #returns new list(doesn't change list): ['3','3'] => ['33']
     index = 0

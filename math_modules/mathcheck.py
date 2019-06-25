@@ -1,6 +1,6 @@
-from mathexception import *
-from mathsigns import *
-from mathtransform import delete_empty
+from .mathexception import *
+from .mathsigns import *
+from .mathtransform import delete_empty
 
 def check_brackets(list_expr):
     leftbr = []     # '('

@@ -1,4 +1,4 @@
-from mathsigns import *
+from .mathsigns import *
 
 def signtransformation(list_expr):      #['2', '<', '=', '3'] => ['2', '<=', 3]
     for offset, num in enumerate(list_expr[:]):

@@ -1,8 +1,8 @@
-from mathexception import calculatorException
-from mathcheck import *
-from mathtransform import *
-from mathconvert import *
-from mathexpression import *
+from math_modules.mathexception import calculatorException
+from math_modules.mathcheck import *
+from math_modules.mathtransform import *
+from math_modules.mathconvert import *
+from math_modules.mathexpression import *
 
 
 class Calculator:

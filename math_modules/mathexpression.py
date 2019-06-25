@@ -1,7 +1,7 @@
-from mathsigns import *
-from mathconvert import *
-from mathtransform import *
-from mathcheck import check_comparison
+from .mathsigns import *
+from .mathconvert import *
+from .mathtransform import *
+from .mathcheck import check_comparison
 
 def expressioneval(list_expr, desiredDICT):     #general function for expressions
     list_expr = subtransformation(list_expr)
