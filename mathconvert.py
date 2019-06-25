@@ -1,4 +1,4 @@
-from mathsigns import TOUPLE_COUNST, DICT_MATH
+from mathsigns import TOUPLE_COUNST, DICT_MATH, TOUPLE_COUNST_inf_nan
 
 def convertdigit(list_expr):        #returns new list(doesn't change list): ['3','3'] => ['33']
     index = 0
@@ -11,13 +11,13 @@ def convertdigit(list_expr):        #returns new list(doesn't change list): ['3'
             index += 1
             digitlist = []
             break
-        if not list_expr[index].isdigit() and bool(digitlist):           
+        if not str(list_expr[index]).isdigit() and bool(digitlist):           
             digitlist = ''.join(digitlist)
             list_expr_res.append(digitlist)
             list_expr_res.append(list_expr[index])
             index += 1
             digitlist = []
-        elif not list_expr[index].isdigit() and not digitlist:
+        elif not str(list_expr[index]).isdigit() and not digitlist:
             list_expr_res.append(list_expr[index])
             index += 1
         else:
@@ -53,6 +53,26 @@ def convertconst(list_expr):        #['e'] => ['2.718281828459045']
             del list_expr[offset]
             list_expr.insert(offset, resultnum)
             return convertconst(list_expr)
+        elif num in TOUPLE_COUNST_inf_nan:
+            list_expr[offset] = float(num)
+
+def normalization(list_expr):
+    res = list_expr[0]
+    resoff = list(res)
+    tail = None
+    for offset, num in enumerate(resoff):
+        if num == '.':                
+            tail = resoff[offset+1:]
+            break
+    sumtail = 0
+    if tail is not None:
+        for num in tail:
+            sumtail += int(num)
+    if sumtail == 0:
+        res = int(float(res))
+    return res
+        
+
 
                       
 

@@ -14,21 +14,21 @@ class Calculator:
     def calculation(self):
         list_expression = list(self.expression)
         list_expression = mathtransformation(list_expression)
-        convertconst(list_expression)
+        convertconst(list_expression)                       #Later
         
         check_spacesAndSeparatrix(list_expression)
         spacetransformation(list_expression)
         check_brackets(list_expression)                     #Late UNION to one function
         signtransformation(list_expression)
-        
+        check_wrongvalues(list_expression)
         list_expression = comparison(list_expression)
         
         if list_expression == True or list_expression == False:
             self.result = list_expression
         else:
-            list_expression = convertdigit(list_expression) #
+            list_expression = convertdigit(list_expression) #            
             convertfloat(list_expression)                   #
-                       
+                      
             check_mathseparatrix(list_expression)
             expressioneval_computemath(list_expression)
             
@@ -36,7 +36,7 @@ class Calculator:
             expressioneval(list_expression, DICT_POW)       #
             expressioneval(list_expression, DICT_MUL_DIV)   #
             expressioneval(list_expression, DICT_ADD_SUB)   #
-            self.result = list_expression                   #Later 'result' must be a number(now it's a list)
+            self.result = normalization(list_expression)  
             
     def __str__(self):
         return 'result: %s' % self.result

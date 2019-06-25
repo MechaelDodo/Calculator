@@ -25,3 +25,11 @@ class check_mathseparatrixException(calculatorException):
             return 'Separatrix should not be here'
         elif self.mathdict == DICT_MATH_ARGS:
             return 'Separatrix should not be more than 1'
+
+class check_wrongvaluesException(calculatorException):
+    def __init__(self, num, offset):
+        calculatorException.__init__(self)
+        self.value = num
+        self.index = offset
+    def __str__(self):
+        return 'Wrong value: index:%s, value:\'%s\'' % (self.index, self.value)

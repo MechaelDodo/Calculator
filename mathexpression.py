@@ -16,8 +16,8 @@ def expressioneval(list_expr, desiredDICT):     #general function for expression
 
 
 def expressioneval_math(list_expr, desiredDICT):        #Later (function for expressions from module math and abs,round)
-                                                        #may be will make a new function for DICT_MATH_ARGS    
-    list_expr.append('')                                #QUICK'N'DIRTY
+  
+    #list_expr.append('')                                #QUICK'N'DIRTY
     for offset, sign in enumerate(list_expr):               
         if (sign in desiredDICT and                     #for MATH DICT_MATH_ARGS
               list_expr[offset+1] != '(' and
@@ -56,8 +56,8 @@ def expressioneval_computemath(list_expr):                          #Later abs(-
                 if count_leftbrackets == count_rightbrackets:
                     check_list = check_list[:offset+1]
                     endbr = offset
-                    break
-        
+                    break        
+
         for num in check_list:                                      #if for example 'abs' has math expression inside itself
             if  (num in DICT_MATH or                 
                 num in DICT_ROUND or
@@ -79,14 +79,15 @@ def expressioneval_computemath(list_expr):                          #Later abs(-
                 del list_expr[index+1:endbr+2+index]
                 for inlist in (rightcheck_list, ',', leftcheck_list):
                     list_expr.insert(index+1, inlist)
-                expressioneval_math(list_expr, DICT_MATH_ARGS)                
+                expressioneval_math(list_expr, DICT_MATH_ARGS)
+                
                 index += 1                                          #?         
-                return expressioneval_computemath(list_expr)
-            
+                return expressioneval_computemath(list_expr)              
         bracketspriority(check_list)
         check_list = ''.join(check_list)
         del list_expr[index+1:endbr+2+index]
-        list_expr.insert(index+1, check_list)                
+        list_expr.insert(index+1, check_list)
+                
         expressioneval_math(list_expr, DICT_ABS)
         expressioneval_math(list_expr, DICT_MATH)
         
@@ -125,9 +126,10 @@ def comparison(list_expr):          #['2', '+', '3', '>=', '4'] => True
             expressioneval(leftlist, DICT_POW)              #
             expressioneval(leftlist, DICT_MUL_DIV)          #
             expressioneval(leftlist, DICT_ADD_SUB)          #
-
+            
             check_brackets(rightlist)                       #
             rightlist = convertdigit(rightlist)             #
+            convertfloat(rightlist) 
             check_mathseparatrix(rightlist)
             expressioneval_computemath(rightlist)
             convertfloat(rightlist)                         #
@@ -135,8 +137,9 @@ def comparison(list_expr):          #['2', '+', '3', '>=', '4'] => True
             expressioneval(rightlist, DICT_POW)             #
             expressioneval(rightlist, DICT_MUL_DIV)         #
             expressioneval(rightlist, DICT_ADD_SUB)         #
-            
-            list_expr = BOOL_DICT[num](''.join(leftlist), ''.join(rightlist))
+
+            list_expr = BOOL_DICT[num](''.join(str(leftlist[0])), ''.join(str(rightlist[0])))
             return list_expr
     return list_expr
+
 
