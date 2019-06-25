@@ -1,4 +1,4 @@
-from .mathsigns import *
+from mathsigns import *
 
 class Transformer:
 

@@ -1,6 +1,7 @@
-from .mathexception import *
-from .mathsigns import *
-from .mathtransform import delete_empty
+from mathexception import *
+from mathsigns import *
+from mathtransform import Transformer
+
 
 def check_brackets(list_expr):
     leftbr = []     # '('
@@ -21,8 +22,7 @@ def check_brackets(list_expr):
     if len(leftbr) != len(rightbr): raise check_bracketsException
     
 
-def check_mathseparatrix(list_expr):            #checks ',' in args DICT_MATH_ARGS and DICT_MATH
-                                              
+def check_mathseparatrix(list_expr):            #checks ',' in args DICT_MATH_ARGS and DICT_MATH                                              
     for offset, num in enumerate(list_expr):
         if num in DICT_MATH or num in DICT_MATH_ARGS:
             check_list = list_expr[offset+1:]
@@ -71,7 +71,7 @@ def check_comparison(list_expr):
 
 
 def check_wrongvalues(list_expr):
-    delete_empty(list_expr)
+    Transformer.delete_empty(list_expr)
     for offset, num in enumerate(list_expr):        
         if (not num.isdigit() and
             num not in DICT_ABS and
