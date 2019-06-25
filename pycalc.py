@@ -36,8 +36,7 @@ class Calculator:
             expressioneval(list_expression, DICT_POW)       #
             expressioneval(list_expression, DICT_MUL_DIV)   #
             expressioneval(list_expression, DICT_ADD_SUB)   #
-            self.result = normalization(list_expression)  
-            
+            self.result = normalization(list_expression)              
     def __str__(self):
         return 'result: %s' % self.result
 
