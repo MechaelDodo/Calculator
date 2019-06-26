@@ -8,7 +8,8 @@ DICT_POW = {'^': lambda aleft, aright: pow(float(aleft), float(aright))}
 
 DICT_MUL_DIV = {'*': lambda aleft, aright: float(aleft) * float(aright),
                 '/': lambda aleft, aright: float(aleft) / float(aright),
-                '//': lambda aleft, aright: float(aleft) // float(aright)}
+                '//': lambda aleft, aright: float(aleft) // float(aright),
+                '%': lambda aleft, aright: float(aleft) % float(aright)}
 
 DICT_ADD_SUB = {'+': lambda aleft, aright: float(aleft) + float(aright),
                 '-': lambda aleft, aright: float(aleft) - float(aright)}
