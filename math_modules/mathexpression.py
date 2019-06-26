@@ -1,7 +1,7 @@
-from mathsigns import *
-from mathconvert import *
-from mathtransform import Transformer
-from mathcheck import check_comparison, check_brackets, check_mathseparatrix
+from .mathsigns import *
+from .mathconvert import *
+from .mathtransform import Transformer
+from .mathcheck import check_comparison, check_brackets, check_mathseparatrix
 
 
 class Proccessor:

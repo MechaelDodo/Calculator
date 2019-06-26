@@ -13,7 +13,7 @@ class Test_mathconvert(unittest.TestCase):
         convert = Convert(['3', '3', '+', '1', '1'])
         convert.convert_digit()
         self.assertEqual(convert.list_expression, ['33', '+', '11'])
-        
+
     def test_convert_float(self):
         convert = Convert(['3', '.', '3', '+', '1', '.', '1'])
         convert.convert_float()
@@ -36,7 +36,7 @@ class Test_mathtransform(unittest.TestCase):
         transformer = Transformer(['2', '<', '=', '3'])
         transformer.sign_transformation()
         self.assertEqual(transformer.list_expression, ['2', '<=', '3'])
-        
+
     def test_sub_transformation(self):
         transformer = Transformer(['-', '5', '+', '1'])
         transformer.sub_transformation()
@@ -50,7 +50,8 @@ class Test_mathtransform(unittest.TestCase):
     def test_math_transformation(self):
         transformer = Transformer(['a', 'b', 's', '(', '2', '-', '10', ')'])
         transformer.math_transformation()
-        self.assertEqual(transformer.list_expression, ['abs', '(', '2', '-', '10', ')'])
+        result = ['abs', '(', '2', '-', '10', ')']
+        self.assertEqual(transformer.list_expression, result)
 
 
 class Test_mathexpression(unittest.TestCase):
@@ -66,23 +67,22 @@ class Test_mathexpression(unittest.TestCase):
         self.assertEqual(proccessor.list_expression, ['5.0'])
 
     def test_expression_evaluation_computemath(self):
-        proccessor = Proccessor(['abs', '(', '-2', ')', '+', 'abs', '(', '-3', ')'])
+        data = ['abs', '(', '-2', ')', '+', 'abs', '(', '-3', ')']
+        proccessor = Proccessor(data)
         proccessor.expression_evaluation_computemath()
-        self.assertEqual(proccessor.list_expression, ['2.0', '+' ,'3.0'])
+        self.assertEqual(proccessor.list_expression, ['2.0', '+', '3.0'])
 
     def test_bracketspriority(self):
         proccessor = Proccessor(['3', '-', '(', '2', '+', '10', ')', '-', '1'])
         proccessor.bracketspriority()
-        self.assertEqual(proccessor.list_expression, ['3', '-', '12.0', '-', '1'])
-        
+        result = ['3', '-', '12.0', '-', '1']
+        self.assertEqual(proccessor.list_expression, result)
+
     def test_comparison(self):
         proccessor = Proccessor(['2', '+', '3', '>=', '4'])
         proccessor.comparison()
         self.assertEqual(proccessor.list_expression, True)
-    
-        
-    
+
 
 if __name__ == '__main__':
     unittest.main()
-
