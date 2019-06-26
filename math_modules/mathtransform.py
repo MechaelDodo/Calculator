@@ -59,6 +59,7 @@ class Transformer:
                 break
             else:
                 secondoffset += 1
+        Transformer.delete_empty(self.list_expression)
 
     def delete_empty(list_expr):
         for offset, num in enumerate(list_expr):

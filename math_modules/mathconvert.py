@@ -1,5 +1,4 @@
 from mathsigns import TOUPLE_COUNST, DICT_MATH, TOUPLE_COUNST_inf_nan
-from mathtransform import Transformer
 
 
 class Convert:

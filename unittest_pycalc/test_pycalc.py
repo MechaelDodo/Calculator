@@ -4,6 +4,7 @@ sys.path.append(r'C:\Users\admin\AppData\Local\Programs\Python\Python37-32\mypyt
 from mathcheck import *
 from mathexception import *
 from mathconvert import *
+from mathtransform import *
 
 
 class Test_mathconvert(unittest.TestCase):
@@ -27,6 +28,29 @@ class Test_mathconvert(unittest.TestCase):
         value = ['2.0']
         value = Convert.normalization(value)
         self.assertEqual(value, 2)
+
+
+class Test_mathtransform(unittest.TestCase):
+
+    def test_sign_transformation(self):
+        transformer = Transformer(['2', '<', '=', '3'])
+        transformer.sign_transformation()
+        self.assertEqual(transformer.list_expression, ['2', '<=', '3'])
+        
+    def test_sub_transformation(self):
+        transformer = Transformer(['-', '5', '+', '1'])
+        transformer.sub_transformation()
+        self.assertEqual(transformer.list_expression, ['-5', '+', '1'])
+
+    def test_space_transformation(self):
+        transformer = Transformer(['5', ' ', '+', '1'])
+        transformer.space_transformation()
+        self.assertEqual(transformer.list_expression, ['5', '+', '1'])
+
+    def test_math_transformation(self):
+        transformer = Transformer(['a', 'b', 's', '(', '2', '-', '10', ')'])
+        transformer.math_transformation()
+        self.assertEqual(transformer.list_expression, ['abs', '(', '2', '-', '10', ')'])
 
 if __name__ == '__main__':
     unittest.main()
