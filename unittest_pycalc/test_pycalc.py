@@ -1,10 +1,10 @@
 import unittest
 import sys
 sys.path.append(r'C:\Users\admin\AppData\Local\Programs\Python\Python37-32\mypyt\calculator_module\myCalculator_forGit\Calculator\math_modules')
-from mathcheck import *
-from mathexception import *
 from mathconvert import *
 from mathtransform import *
+from mathsigns import *
+from mathexpression import *
 
 
 class Test_mathconvert(unittest.TestCase):
@@ -51,6 +51,37 @@ class Test_mathtransform(unittest.TestCase):
         transformer = Transformer(['a', 'b', 's', '(', '2', '-', '10', ')'])
         transformer.math_transformation()
         self.assertEqual(transformer.list_expression, ['abs', '(', '2', '-', '10', ')'])
+
+
+class Test_mathexpression(unittest.TestCase):
+
+    def test_expression_evaluation(self):
+        proccessor = Proccessor(['3', '+', '1'])
+        proccessor.expression_evaluation(DICT_ADD_SUB)
+        self.assertEqual(proccessor.list_expression, ['4.0'])
+
+    def test_expression_evaluation_math(self):
+        proccessor = Proccessor(['abs', '-5'])
+        proccessor.expression_evaluation_math(DICT_ABS)
+        self.assertEqual(proccessor.list_expression, ['5.0'])
+
+    def test_expression_evaluation_computemath(self):
+        proccessor = Proccessor(['abs', '(', '-2', ')', '+', 'abs', '(', '-3', ')'])
+        proccessor.expression_evaluation_computemath()
+        self.assertEqual(proccessor.list_expression, ['2.0', '+' ,'3.0'])
+
+    def test_bracketspriority(self):
+        proccessor = Proccessor(['3', '-', '(', '2', '+', '10', ')', '-', '1'])
+        proccessor.bracketspriority()
+        self.assertEqual(proccessor.list_expression, ['3', '-', '12.0', '-', '1'])
+        
+    def test_comparison(self):
+        proccessor = Proccessor(['2', '+', '3', '>=', '4'])
+        proccessor.comparison()
+        self.assertEqual(proccessor.list_expression, True)
+    
+        
+    
 
 if __name__ == '__main__':
     unittest.main()

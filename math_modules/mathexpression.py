@@ -40,6 +40,7 @@ class Proccessor:
                 del self.list_expression[offset:offset+2]
                 self.list_expression.insert(offset, res)
                 return self.expression_evaluation_math(desiredDICT)
+        Transformer.delete_empty(self.list_expression)
 
     def expression_evaluation_computemath(self):    # Later abs(-2)+abs(-3)=2+3
         index = 0
