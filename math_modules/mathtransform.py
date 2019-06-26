@@ -23,7 +23,7 @@ class Transformer:
             self.list_expression.insert(0, num)
 
     def space_transformation(self):     # deletes all spaces
-        for offset, num in enumerate(self.list_expression[:]):
+        for offset, num in enumerate(self.list_expression):
             if num == ' ':
                 del self.list_expression[offset]
                 self.space_transformation()
