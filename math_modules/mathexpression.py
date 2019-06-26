@@ -1,7 +1,7 @@
 from mathsigns import *
 from mathconvert import *
 from mathtransform import Transformer
-from mathcheck import check_comparison
+from mathcheck import check_comparison, check_brackets, check_mathseparatrix
 
 class Proccessor:
 
@@ -41,8 +41,8 @@ class Proccessor:
                 self.list_expression.insert(offset, res)
                 return self.expression_evaluation_math(desiredDICT)
 
-    def expression_evaluation_computemath(self):                          #Later abs(-2)+abs(-3) = 5    LATER
-        index = 0    
+    def expression_evaluation_computemath(self):                          #Later abs(-2)+abs(-3) = 2 + 3    LATER
+        index = 0
         while index != len(self.list_expression):                          
             if (self.list_expression[index] in DICT_MATH or                
                 self.list_expression[index] in DICT_ROUND or
@@ -65,11 +65,15 @@ class Proccessor:
                         break        
 
             for num in check_list:                                      #if for example 'abs' has math expression inside itself
-                if  (num in DICT_MATH or                 
-                    num in DICT_ROUND or
-                    num in DICT_ABS or
+                if  (num in DICT_MATH or
+                     num in DICT_ROUND or
+                     num in DICT_ABS or                     
                      num in DICT_MATH_ARGS):
+                    list_expr = self.list_expression
+                    self.list_expression = check_list
                     self.expression_evaluation_computemath()
+                    check_list = self.list_expression
+                    self.list_expression = list_expr
                     
             for offset, num in enumerate(check_list):                   #in math expr which has any args 
                 if num == ',':
@@ -78,26 +82,35 @@ class Proccessor:
                     for lst in (leftcheck_list, rightcheck_list):       #QUICK'N'DIRTY
                         lst.insert(0, '(')
                         lst.append(')')
-                        self.bracketspriority(lst)                      #LATER bracketspriority
+                        list_expr = self.list_expression
+                        self.list_expression = lst
+                        self.bracketspriority()
+                        lst =  self.list_expression
+                        self.list_expression = list_expr
                         
                     leftcheck_list = ''.join(leftcheck_list)
                     rightcheck_list = ''.join(rightcheck_list)
                     del self.list_expression[index+1:endbr+2+index]
                     for inlist in (rightcheck_list, ',', leftcheck_list):
                         self.list_expression.insert(index+1, inlist)
-                    expression_evaluation_math(DICT_MATH_ARGS)                    
+                    self.expressioneval_math(DICT_MATH_ARGS)                    
                     index += 1                                          #?         
-                    return self.expression_evaluation_computemath()              
-            self.bracketspriority(check_list)                           #LATER bracketspriority
+                    return self.expressioneval_computemath()
+
+            list_expr = self.list_expression
+            self.list_expression = check_list    
+            self.bracketspriority()
+            check_list = self.list_expression
+            self.list_expression = list_expr
             check_list = ''.join(check_list)
-            del list_expr[index+1:endbr+2+index]
+            del self.list_expression[index+1:endbr+2+index]
             self.list_expression.insert(index+1, check_list)
-                    
-            expression_evaluation_math(self.list_expression, DICT_ABS)
-            expression_evaluation_math(self.list_expression, DICT_MATH)
             
+            for dict_math in (DICT_ABS, DICT_MATH):
+                self.expression_evaluation_math(dict_math)            
             index += 1                                  #?
             return self.expression_evaluation_computemath()
+        
 
     def bracketspriority(self):    #changes list, computes expressions in brackets: ['3', '-', '(', '2', '+', '10', ')', '-', '1'] => ['3', '-', '12', '-', '1']
         for offset, num in enumerate(self.list_expression):
@@ -105,55 +118,60 @@ class Proccessor:
                 leftbr = offset
             elif num == ')':
                 list_expr =  self.list_expression
+                                
+                self.list_expression = self.list_expression[leftbr+1:offset]
                 convert = Convert(self.list_expression)
                 convert.convert_digit()
-                
-                self.list_expression = self.list_expression[leftbr+1:offset]
                 self.list_expression = convert.list_expression                       #
+                
                 
                 self.expression_evaluation(DICT_POW)            #
                 self.expression_evaluation(DICT_MUL_DIV)        #
                 self.expression_evaluation(DICT_ADD_SUB)        #
                 
                 del list_expr[leftbr:offset+1]
-                list_expr.insert(leftbr, ''.join(self.expression_evaluation))
-                self.expression_evaluation = list_expr
+                list_expr.insert(leftbr, ''.join(self.list_expression))
+                self.list_expression = list_expr
                 self.bracketspriority()
 
-    def comparison(list_expr):          #['2', '+', '3', '>=', '4'] => True                                  
-        check_comparison(list_expr)
+    def comparison(self):          #['2', '+', '3', '>=', '4'] => True                                  
+        check_comparison(self.list_expression)
         
-        for offset, num in enumerate(list_expr):    
+        for offset, num in enumerate(self.list_expression):    
             if num in BOOL_DICT:
-                leftlist = list_expr[:offset]
-                rightlist = list_expr[offset+1:]
+                leftlist = self.list_expression[:offset]
+                rightlist = self.list_expression[offset+1:]
 
                 check_brackets(leftlist)                        #
-                leftlist = convertdigit(leftlist)               #
-                convertfloat(leftlist)                          #
-                check_mathseparatrix(leftlist)
-                expressioneval_computemath(leftlist)
-                bracketspriority(leftlist)                      #
-                expressioneval(leftlist, DICT_POW)              #
-                expressioneval(leftlist, DICT_MUL_DIV)          #
-                expressioneval(leftlist, DICT_ADD_SUB)          #
-                
-                check_brackets(rightlist)                       #
-                rightlist = convertdigit(rightlist)             #
-                convertfloat(rightlist) 
-                check_mathseparatrix(rightlist)
-                expressioneval_computemath(rightlist)
-                convertfloat(rightlist)                         #
-                bracketspriority(rightlist)                     #
-                expressioneval(rightlist, DICT_POW)             #
-                expressioneval(rightlist, DICT_MUL_DIV)         #
-                expressioneval(rightlist, DICT_ADD_SUB)         #
+                convert = Convert(leftlist)
+                convert.convert_digit()
+                convert.convert_float()
+                leftlist = convert.list_expression
+                check_mathseparatrix(leftlist)                
+                self.list_expression = leftlist                
+                self.expression_evaluation_computemath()
+                self.bracketspriority()
+                for dict_math in (DICT_POW, DICT_MUL_DIV, DICT_ADD_SUB):
+                    self.expression_evaluation(dict_math)
+                leftlist = self.list_expression
+                                
+                check_brackets(rightlist)                        #
+                convert = Convert(rightlist)
+                convert.convert_digit()
+                convert.convert_float()
+                rightlist = convert.list_expression
+                check_mathseparatrix(rightlist)                
+                self.list_expression = rightlist                
+                self.expression_evaluation_computemath()
+                self.bracketspriority()
+                for dict_math in (DICT_POW, DICT_MUL_DIV, DICT_ADD_SUB):
+                    self.expression_evaluation(dict_math)
+                rightlist = self.list_expression
 
-                list_expr = BOOL_DICT[num](''.join(str(leftlist[0])), ''.join(str(rightlist[0])))
-                return list_expr
-        return list_expr
+                self.list_expression = BOOL_DICT[num](''.join(str(leftlist[0])), ''.join(str(rightlist[0])))
+
 
 if __name__ == '__main__':
-    p = Proccessor(['3', '-', '(', '2', '+', '10', ')', '-', '1'])
-    p.bracketspriority()
+    p = Proccessor(['2', '+', '3', '>=', '4'])
+    p.comparison()
     print(p.list_expression)
