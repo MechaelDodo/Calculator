@@ -1,6 +1,6 @@
-from mathexception import *
-from mathsigns import *
-from mathtransform import Transformer
+from .mathexception import *
+from .mathsigns import *
+from .mathtransform import Transformer
 
 
 def check_brackets(list_expr):

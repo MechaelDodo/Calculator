@@ -1,7 +1,7 @@
-from mathsigns import *
-from mathconvert import *
-from mathtransform import Transformer
-from mathcheck import check_comparison, check_brackets, check_mathseparatrix
+from .mathsigns import *
+from .mathconvert import *
+from .mathtransform import Transformer
+from .mathcheck import check_comparison, check_brackets, check_mathseparatrix
 
 class Proccessor:
 
@@ -106,7 +106,7 @@ class Proccessor:
             del self.list_expression[index+1:endbr+2+index]
             self.list_expression.insert(index+1, check_list)
             
-            for dict_math in (DICT_ABS, DICT_MATH):
+            for dict_math in (DICT_ABS, DICT_ROUND, DICT_MATH):
                 self.expression_evaluation_math(dict_math)            
             index += 1                                  #?
             return self.expression_evaluation_computemath()
@@ -148,7 +148,7 @@ class Proccessor:
                 convert.convert_float()
                 leftlist = convert.list_expression
                 check_mathseparatrix(leftlist)                
-                self.list_expression = leftlist                
+                self.list_expression = leftlist
                 self.expression_evaluation_computemath()
                 self.bracketspriority()
                 for dict_math in (DICT_POW, DICT_MUL_DIV, DICT_ADD_SUB):
@@ -161,7 +161,7 @@ class Proccessor:
                 convert.convert_float()
                 rightlist = convert.list_expression
                 check_mathseparatrix(rightlist)                
-                self.list_expression = rightlist                
+                self.list_expression = rightlist
                 self.expression_evaluation_computemath()
                 self.bracketspriority()
                 for dict_math in (DICT_POW, DICT_MUL_DIV, DICT_ADD_SUB):

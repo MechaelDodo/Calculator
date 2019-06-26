@@ -1,4 +1,4 @@
-from mathsigns import *
+from .mathsigns import *
 
 class Transformer:
 
@@ -60,7 +60,7 @@ class Transformer:
         for offset, num in enumerate(list_expr):
             if num == '':
                 del list_expr[offset]
-                return delete_empty(list_expr)
+                return Transformer.delete_empty(list_expr)
 
 if __name__ == '__main__':
     t = Transformer(['-', '5', '+',' ', '1', '<', '=', '3', '+','a', 'b', 's', '(', '2', '-', '10', ')'])
