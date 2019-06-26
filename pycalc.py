@@ -6,11 +6,13 @@ from math_modules.mathexpression import Proccessor
 
 
 class Calculator:
-    def __init__(self, expression = None):
+    def __init__(self, expression=None):
         self.expression = expression
         self.result = 0
+
     def new_expression(self, expression):
         self.__init__(expression)
+
     def calculation(self):
         list_expression = list(self.expression)
         transformer = Transformer(list_expression)
@@ -39,24 +41,24 @@ class Calculator:
             proccessor.bracketspriority()
             for dict_math in (DICT_POW, DICT_MUL_DIV, DICT_ADD_SUB):
                 proccessor.expression_evaluation(dict_math)
-            self.result = Convert.normalization(proccessor.list_expression)           
+            self.result = Convert.normalization(proccessor.list_expression)
+
     def __str__(self):
         return 'result: %s' % self.result
 
-    
 if __name__ == '__main__':
-    
+
     calc = Calculator()
-    
+
     while True:
         expr = input('Enter the expression (exit - y):\n')
-        if expr == 'y' or expr == 'Y':                  # add the exception .when someone enters 'Y' or 'y'
+        if expr == 'y' or expr == 'Y':
             break
         else:
-            calc.new_expression(expr)            
+            calc.new_expression(expr)
             try:
                 calc.calculation()
             except calculatorException as E:
-                print('ERROR:', E)        
+                print('ERROR:', E)
             else:
                 print(calc)
