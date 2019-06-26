@@ -1,4 +1,4 @@
-from .mathsigns import DICT_MATH, DICT_MATH_ARGS
+from mathsigns import DICT_MATH, DICT_MATH_ARGS
 
 
 class calculatorException(Exception):
