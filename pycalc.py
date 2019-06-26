@@ -1,8 +1,8 @@
 from math_modules.mathexception import calculatorException
 from math_modules.mathcheck import *
-from math_modules.mathtransform import *
-from math_modules.mathconvert import *
-from math_modules.mathexpression import *
+from math_modules.mathtransform import Transformer
+from math_modules.mathconvert import Convert
+from math_modules.mathexpression import Proccessor
 
 
 class Calculator:
@@ -13,30 +13,33 @@ class Calculator:
         self.__init__(expression)
     def calculation(self):
         list_expression = list(self.expression)
-        list_expression = mathtransformation(list_expression)
-        convertconst(list_expression)                       #Later
-        
-        check_spacesAndSeparatrix(list_expression)
-        spacetransformation(list_expression)
-        check_brackets(list_expression)                     #Late UNION to one function
-        signtransformation(list_expression)
-        check_wrongvalues(list_expression)
-        list_expression = comparison(list_expression)
-        
-        if list_expression == True or list_expression == False:
-            self.result = list_expression
+        transformer = Transformer(list_expression)
+        convert = Convert(list_expression)
+        transformer.math_transformation()
+        convert.list_expression = transformer.list_expression
+        convert.convert_const()
+        check_spacesAndSeparatrix(convert.list_expression)
+        transformer.list_expression = convert.list_expression
+        transformer.space_transformation()
+        check_brackets(transformer.list_expression)
+        transformer.sign_transformation()
+        check_wrongvalues(transformer.list_expression)
+
+        proccessor = Proccessor(transformer.list_expression)
+        proccessor.comparison()
+        if type(proccessor.list_expression) == bool:
+            self.result = proccessor.list_expression
         else:
-            list_expression = convertdigit(list_expression) #            
-            convertfloat(list_expression)                   #
-                      
-            check_mathseparatrix(list_expression)
-            expressioneval_computemath(list_expression)
-            
-            bracketspriority(list_expression)               #
-            expressioneval(list_expression, DICT_POW)       #
-            expressioneval(list_expression, DICT_MUL_DIV)   #
-            expressioneval(list_expression, DICT_ADD_SUB)   #
-            self.result = normalization(list_expression)              
+            convert.list_expression = proccessor.list_expression
+            convert.convert_digit()
+            convert.convert_float()
+            check_mathseparatrix(convert.list_expression)
+            proccessor.list_expression = convert.list_expression
+            proccessor.expression_evaluation_computemath()
+            proccessor.bracketspriority()
+            for dict_math in (DICT_POW, DICT_MUL_DIV, DICT_ADD_SUB):
+                proccessor.expression_evaluation(dict_math)
+            self.result = Convert.normalization(proccessor.list_expression)           
     def __str__(self):
         return 'result: %s' % self.result
 
